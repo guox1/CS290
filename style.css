@@ -1,0 +1,31 @@
+table {
+  border-style: solid;
+}
+
+table#fighterslist td:nth-of-type(2n+3){
+  color: purple;
+}
+
+td, th {
+  border-style: solid;  
+}
+
+.column1 {
+  text-align:  center;
+  font-style:  italic;
+}
+
+.outer-content  {
+  background-color:  pink;
+  top:  20px;
+  text-align:  left;
+  width:  75%;
+  padding:  1px;
+}
+
+.inner-content  {
+  background-color:  blue;
+  text-align:  center;
+  margin:  auto;
+  width:  75%;
+}
