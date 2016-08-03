@@ -1,5 +1,5 @@
 var express = require('express');
-var pool = require('./config').pool;
+var pool = require('./mySQL').pool;
 
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout:'main'});
