@@ -92,7 +92,7 @@ function callSelect()
 {
   var req = new XMLHttpRequest();
 
-  req.open('GET', "http://52.35.2.29:3000/select", true);
+  req.open('GET', "http://52.39.88.179:3000/select", true);
   req.setRequestHeader('Content-Type', 'application/json');
   req.addEventListener('load',function()
   {
@@ -124,7 +124,7 @@ function bindButton()
       }
 
     var req = new XMLHttpRequest();
-    var url= "http://52.35.2.29:3000/insert?name=" 
+    var url= "http://52.39.88.179:3000/insert?name=" 
     + dataInput.name + "&reps=" + dataInput.reps + "&weight=" 
     + dataInput.weight + "&date=" + dataInput.date + "&lbs=" + dataInput.units;
     
@@ -159,7 +159,7 @@ function updateGET(id)
     }
 
   var req = new XMLHttpRequest();
-  var url= "http://52.35.2.29:3000/update?id=" + dataInput.id 
+  var url= "http://52.39.88.179:3000/update?id=" + dataInput.id 
   + "&name=" + dataInput.name + "&reps=" + dataInput.reps + "&weight=" 
   + dataInput.weight + "&date=" + dataInput.date + "&lbs=" + dataInput.units;
     
