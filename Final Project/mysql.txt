@@ -1,0 +1,31 @@
+To install/run mysql and send to db on url, do the following:
+
+1. Install:  sudo apt-get install mysql-server
+2. After installation, to start it do:
+        mysql -u root -p
+3. The above command will prompt for the password(default).
+4. You are in mysql, type >use student; then >show tables;
+   Should output +-------------------+
+                 | Tables_in_student |
+                 +-------------------+
+                 | workouts            |
+                 +-------------------+
+5. If it's blank, paste in: CREATE TABLE workouts (
+                            id INT PRIMARY KEY AUTO_INCREMENT,
+                            name VARCHAR(255) NOT NULL,
+                            reps INT,
+                            weight INT,
+                            date DATE,
+                            lbs BOOLEAN);
+6. You can also type >describe workouts; then it will shows:
++--------+--------------+------+-----+---------+----------------+
+| Field  | Type         | Null | Key | Default | Extra          |
++--------+--------------+------+-----+---------+----------------+
+| id     | int(11)      | NO   | PRI | NULL    | auto_increment |
+| name   | varchar(255) | NO   |     | NULL    |                |
+| reps   | int(11)      | YES  |     | NULL    |                |
+| weight | int(11)      | YES  |     | NULL    |                |
+| date   | date         | YES  |     | NULL    |                |
+| lbs    | tinyint(1)   | YES  |     | NULL    |                |
++--------+--------------+------+-----+---------+----------------+
+7. Check your Field are all matched!

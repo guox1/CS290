@@ -1,176 +1,138 @@
-document.addEventListener('DOMContentLoaded', callSelect);
-document.addEventListener('DOMContentLoaded', bindButton);
+document.addEventListener('DOMContentLoaded', bindButtons);
 
-function createTable(data)
-{
-  var newTable = document.createElement("table");
-  var newHead = document.createElement("thead");
-  var newBody = document.createElement("tbody");
-
-  newTable.setAttribute('id','tableID');
-  document.body.appendChild(newTable);
-
-  newTable.appendChild(newHead);
-  newTable.appendChild(newBody);
-
-  // Head
-  var headers = ["","name","reps","weight","date","lbs"];
-  var headRow = document.createElement("tr"); 
-  
-  newHead.appendChild(headRow);
-
-  for(var i in headers)
-  {
-    var newHeader = document.createElement("th");
-    newHeader.textContent = headers[i];
-    headRow.appendChild(newHeader);
-  }
-
-
-  // Body 
-  for(var i in data)
-  {
-    var newRow = document.createElement("tr");
-    var rowID = null;
-    var hiddenID = 1; 
-
-    for(var j in data[i])
-    {
-      var newCell = document.createElement("td");
-      newCell.textContent = data[i][j];
-      if(hiddenID === 1)
-      {
-        newCell.style.visibility = "hidden";
-        hiddenID = 0; 
-      }
-
-      newRow.appendChild(newCell);
+var req = new XMLHttpRequest();
+req.open('GET', 'http://52.39.88.179:3000/getall', true);
+req.addEventListener('load', function(){
+    if (req.status < 400){
+        var data = JSON.parse(req.responseText);
+        var tbl = document.body.appendChild(buildTable(data));
+    } else {
+        console.log("Error in network request: " + request.statusText);
     }
+});
+req.send(null);
 
-    // Delete
-    var newButton = document.createElement("button");
-    var buttonText = document.createTextNode("delete");
-    newButton.appendChild(buttonText);
-
-    newButton.id = newRow.firstChild.textContent;
-    newButton.onclick = function(x)
-    {
-      return function()
-      {
-        deleteButton(x);
-      };
-    }(newButton.id);  
-    newRow.appendChild(newButton);
-    
-    // Edit
-    var upButton = document.createElement("button");
-    var upText = document.createTextNode("edit");
-    upButton.appendChild(upText);
-
-    upButton.id = newRow.firstChild.textContent;
-    upButton.onclick = function(x)
-    {
-      return function()
-      {
-        editButton(x);
-      };
-    }(upButton.id); 
-    newRow.appendChild(upButton);
-    
-    newBody.appendChild(newRow);
+function buildTable(data) {
+  var tbl = document.createElement('table');
+  var header_row = document.createElement('tr');
+  tbl.appendChild(header_row);
+  tbl.id = "mainTable";
+  headers = ["Name", "Reps", "Weight", "Date", "ibs"];
+  //Head
+  for (var i = 0; i < headers.length; i++) {
+    var heading = document.createElement('th');
+    heading.textContent = headers[i];
+    header_row.appendChild(heading);
   }
-}
-
-
-function deleteTable()
-{
-  var table = document.getElementById('tableID');
-  table.parentNode.removeChild(table); 
-}
-
-function callSelect()
-{
-  var req = new XMLHttpRequest();
-
-  req.open('GET', "http://52.39.88.179:3000/select", true);
-  req.setRequestHeader('Content-Type', 'application/json');
-  req.addEventListener('load',function()
-  {
-    var response = JSON.parse(req.responseText); 
-    createTable(response); 
-  });
-  req.send(); 
-}
-
-function bindButton()
-{
-  document.getElementById('addExercise').addEventListener("click", function(event)
-  {
-    
-    var dataInput = {}; 
-    dataInput.name = document.getElementById("name").value;
-    dataInput.reps = document.getElementById("reps").value;
-    dataInput.weight = document.getElementById("weight").value;
-    dataInput.date = document.getElementById("date").value;
-    var radio = document.getElementsByName("measure");
-
-      if(radio[0].checked) 
-      {
-          dataInput.measure = "1";
-      }
-      else
-      {
-          dataInput.measure = "0";
+  //Body
+  for (var i = 0; i < data.length; i++) {
+      var row = document.createElement('tr');
+      var id = data[i]["id"];
+      fields = ['name', 'reps', 'weight', 'date', 'ibs'];
+      for (var j = 0; j <= 4; j++) {
+          var cell = document.createElement('td');
+          cell.textContent = data[i][fields[j]];
+          row.appendChild(cell);
       }
 
+      var f = document.createElement('form');
+      f.setAttribute('method',"post");
+      var dlt = document.createElement('input');
+      dlt.setAttribute('type', "button");
+      dlt.setAttribute('name', "Delete");
+      dlt.setAttribute('value', "Delete");
+      dlt.setAttribute('onclick', 'deleteRow(this)')
+      f.appendChild(dlt);
+
+      var hidden = document.createElement('input');
+      hidden.setAttribute('type', "hidden");
+      hidden.setAttribute('name', "id");
+      hidden.setAttribute('value', id);
+      f.appendChild(hidden);
+
+      var edit = document.createElement('input');
+      edit.setAttribute('type', "button");
+      edit.setAttribute('name', "Delete");
+      edit.setAttribute('value', "Edit");
+      edit.setAttribute('onclick', 'editRow(this)')
+      f.appendChild(edit);
+
+      row.appendChild(f);
+      tbl.appendChild(row);
+  }
+  tbl.style.borderCollapse = "collase";
+  tbl.setAttribute("align", "center");
+  return tbl;
+}
+
+function deleteRow(dltButton) {
     var req = new XMLHttpRequest();
-    var url= "http://52.39.88.179:3000/insert?name=" 
-    + dataInput.name + "&reps=" + dataInput.reps + "&weight=" 
-    + dataInput.weight + "&date=" + dataInput.date + "&lbs=" + dataInput.units;
-    
-    req.open('GET', url, true);
-    req.addEventListener('load',function()
-    {
-      deleteTable(); 
-      callSelect(); 
+    var payload = {};
+    payload.id = dltButton.nextElementSibling.value;
+    req.open("POST", "http://52.39.88.179:3000/delete", true);
+    req.setRequestHeader('Content-type', 'application/json');
+    req.addEventListener('load', function(){
+        if (req.status >= 200 && req.status < 400){
+            var data = JSON.parse(req.responseText);
+            var tbl = document.body.appendChild(buildTable(data));
+            document.body.removeChild(document.getElementById("mainTable"));
+        } else {
+            console.log("Error in network request: " + req.statusText);
+        }});
+    req.send(JSON.stringify(payload));
+    event.preventDefault(); //without refresh
+};
+
+
+function editRow(editButton) {
+    var id = editButton.previousElementSibling.value;
+    window.location="http://52.39.88.179:3000/edit?id=" + id;
+}
+
+function bindButtons(){
+    document.getElementById('addExercise').addEventListener('click', function(event){
+        var req = new XMLHttpRequest();
+        var payload = {};
+        payload.date = document.getElementById('date').value;
+        payload.name = document.getElementById('name').value;
+        //if (payload.name == "") {
+        //    alert("Please enter the exercise name and try again.");
+        //    return;
+        //}
+        payload.weight = document.getElementById('weight').value;
+        payload.reps = document.getElementById('reps').value;
+        var radios  = document.getElementsByName('units');
+        if (payload.name == "") {
+           alert("Please enter all necessary info and try again.");
+           return;
+        }
+
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                payload.units = Number(radios[i].value);
+                break;
+            }
+        }
+        req.open("POST", "http://52.39.88.179:3000/insert", true);
+        req.setRequestHeader('Content-type', 'application/json');
+        req.addEventListener('load', function(){
+            if (req.status >= 200 && req.status < 400){
+                var data = JSON.parse(req.responseText);
+                var tbl = document.body.appendChild(buildTable(data));
+                document.body.removeChild(document.getElementById("mainTable"));
+            } else {
+                console.log("Error in network request: " + req.statusText);
+            }});
+        req.send(JSON.stringify(payload));
+        event.preventDefault();
     });
-    req.send(); 
-    event.preventDefault(); 
-  });
-};
+}
 
-function updateGET(id)
-{
-  var dataInput = {};
-  dataInput.id = id;
-  dataInput.name = document.getElementById("newName").value;
-  dataInput.reps = document.getElementById("newReps").value;
-  dataInput.weight = document.getElementById("newWeight").value;
-  dataInput.date = document.getElementById("newDate").value;
-  var radio = document.getElementsByName("newMeasure");
 
-    if(radio[0].checked)
-    {
-      dataInput.units = "1";
-    }
-    else
-    {
-      dataInput.units = "0";
-    }
 
-  var req = new XMLHttpRequest();
-  var url= "http://52.39.88.179:3000/update?id=" + dataInput.id 
-  + "&name=" + dataInput.name + "&reps=" + dataInput.reps + "&weight=" 
-  + dataInput.weight + "&date=" + dataInput.date + "&lbs=" + dataInput.units;
-    
-  req.open('GET', url , true);
-  req.addEventListener('load',function()
-  {
-    deleteTable(); 
-    callSelect(); 
-    document.body.removeChild(document.getElementById("newForm" + id));
-  });
-  req.send(); 
-  event.preventDefault(); 
 
-};
+
+
+
+
+

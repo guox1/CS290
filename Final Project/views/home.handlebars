@@ -1,5 +1,4 @@
 <h1>Workout Tracker</h1>
-
 <form>
   <fieldset>
     <legend>Add exercise:</legend>
@@ -10,7 +9,7 @@
     </p>
 
     <p>
-    <label for="reps">Reps:</label>
+    <label for="reps"># Reps:</label>
     <input type="number" name="reps" id="reps">
     </p>
 
@@ -18,8 +17,8 @@
     <label for="weight">Weight:</label>
     <input type="number" name="weight" id="weight">
 
-    <input type="radio" name="measure" value="1" >lbs
-    <input type="radio" name="measure" value="0" >kgs
+    <input type="radio" name="units" value="1" checked="true">ibs
+    <input type="radio" name="units" value="0">kilos
     </p>
 
     <p>
@@ -27,14 +26,12 @@
     <input type="date" name="date" id="date">
     </p>
 
-
-    <button id="addExercise" type="submit">Add Exercise</button>
+    <p>
+    <input type="submit" id="addExercise">
+    </p>
 
   </fieldset>
 </form>
+<p></p>
 
-</br>
-</br>
-
-<h2>Current Workout</h2>
-
+<h2>Workout db</h2>
